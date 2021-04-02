@@ -31,7 +31,6 @@ module.exports = [
     response: config => {
       const { username } = config.body
       const token = tokens[username]
-
       // mock error
       if (!token) {
         return {
@@ -54,15 +53,12 @@ module.exports = [
     response: config => {
       const { token } = config.query
       const info = users[token]
-
-      // mock error
       if (!info) {
         return {
           code: 50008,
           message: 'Login failed, unable to get user details.'
         }
       }
-
       return {
         code: 20000,
         data: info
