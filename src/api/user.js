@@ -30,3 +30,11 @@ export function changeSetting(data) {
     data
   })
 }
+
+export function updateProfile(data) {
+  return request({
+    url: '/users/update-profile',
+    method: 'put',
+    data
+  })
+}

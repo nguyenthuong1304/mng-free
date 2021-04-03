@@ -1,4 +1,4 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo, updateProfile } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 import router, { resetRouter } from '@/router'
 
@@ -7,7 +7,8 @@ const state = {
   name: '',
   avatar: '',
   introduction: '',
-  roles: []
+  roles: [],
+  user: {}
 }
 
 const mutations = {
@@ -25,6 +26,9 @@ const mutations = {
   },
   SET_ROLES: (state, roles) => {
     state.roles = roles
+  },
+  SET_USER: (state, user) => {
+    state.user = user
   }
 }
 
@@ -67,6 +71,7 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
+        commit('SET_USER', user)
         dispatch('settings/changeFullSetting', ownConfig, { root: true })
 
         resolve(user)
@@ -74,6 +79,18 @@ const actions = {
         reject(error)
       })
     })
+  },
+  // update profile
+  updateProfile({ commit }, user) {
+    return new Promise((resolve, reject) => {
+      updateProfile(user).then(response => {
+        console.log(response)
+      })
+    })
+  },
+
+  serUser({ commit }, user) {
+    commit('SET_USER', user)
   },
 
   // user logout
@@ -107,20 +124,12 @@ const actions = {
   // dynamically modify permissions
   async changeRoles({ commit, dispatch }, role) {
     const token = role + '-token'
-
     commit('SET_TOKEN', token)
     setToken(token)
-
     const { roles } = await dispatch('getInfo')
-
     resetRouter()
-
-    // generate accessible routes map based on roles
     const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
-    // dynamically add accessible routes
     router.addRoutes(accessRoutes)
-
-    // reset visited views and cached views
     dispatch('tagsView/delAllViews', null, { root: true })
   }
 }
