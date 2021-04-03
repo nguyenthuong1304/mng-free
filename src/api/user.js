@@ -12,13 +12,21 @@ export function getInfo(token) {
   return request({
     url: '/auth/me',
     method: 'post',
-    params: { }
+    params: {}
   })
 }
 
 export function logout() {
   return request({
-    url: '/vue-element-admin/user/logout',
+    url: '/auth/logout',
     method: 'post'
+  })
+}
+
+export function changeSetting(data) {
+  return request({
+    url: '/users/change-setting',
+    method: 'post',
+    data
   })
 }

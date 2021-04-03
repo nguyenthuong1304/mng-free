@@ -44,14 +44,21 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
+  getInfo({ commit, state, dispatch }) {
     return new Promise((resolve, reject) => {
       getInfo(state.token).then(response => {
-        const { data } = response
-        if (!data) {
+        const { user } = response
+        if (!user) {
           reject('Verification failed, please Login again.')
         }
-        const { roles, name, avatar, introduction } = data
+        const { roles, name, avatar, introduction, config } = user
+        const ownConfig = {
+          theme: config.theme_color,
+          showSettings: true,
+          tagsView: !!config.open_tags_view,
+          fixedHeader: !!config.fixed_header,
+          sidebarLogo: !!config.sidebar_logo
+        }
         // roles must be a non-empty array
         if (!roles || roles.length <= 0) {
           reject('getInfo: roles must be a non-null array!')
@@ -60,7 +67,9 @@ const actions = {
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
         commit('SET_INTRODUCTION', introduction)
-        resolve(data)
+        dispatch('settings/changeFullSetting', ownConfig, { root: true })
+
+        resolve(user)
       }).catch(error => {
         reject(error)
       })

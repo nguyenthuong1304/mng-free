@@ -1,5 +1,6 @@
 import variables from '@/styles/element-variables.scss'
 import defaultSettings from '@/settings'
+import { changeSetting } from '@/api/user'
 
 const { showSettings, tagsView, fixedHeader, sidebarLogo } = defaultSettings
 
@@ -17,12 +18,27 @@ const mutations = {
     if (state.hasOwnProperty(key)) {
       state[key] = value
     }
+  },
+  CHANGE_FULL_SETTING: (state, setting) => {
+    for (const [key, value] of Object.entries(setting)) {
+      state[key] = value
+    }
   }
 }
 
 const actions = {
-  changeSetting({ commit }, data) {
-    commit('CHANGE_SETTING', data)
+  changeSetting({ commit, state }, data) {
+    if (state[data.key] !== data.value) {
+      return new Promise((res, rej) => {
+        changeSetting(data).then(response => {
+          commit('CHANGE_SETTING', data)
+          res(response)
+        }).catch(err => rej(err))
+      })
+    }
+  },
+  changeFullSetting({ commit }, data) {
+    commit('CHANGE_FULL_SETTING', data)
   }
 }
 
