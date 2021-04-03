@@ -1,5 +1,5 @@
 module.exports = {
-  title: 'Vue Element Admin',
+  title: 'Quản lý',
   showSettings: true,
   tagsView: true,
   fixedHeader: false,
