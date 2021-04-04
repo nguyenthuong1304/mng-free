@@ -11,39 +11,40 @@
         autocomplete="on"
       />
     </el-form-item>
-    <el-form-item label="Công việc" required>
+    <el-form-item label="Công việc" prop="job" required>
       <el-input v-model="people.job" />
     </el-form-item>
-    <el-form-item label="Giới thiệu" required>
+    <el-form-item label="Giới thiệu" prop="description" required>
       <el-input v-model="people.description" />
     </el-form-item>
-    <el-form-item label="Ngày sinh" required>
+    <el-form-item label="Ngày sinh" prop="birthday" required>
       <el-col :span="11">
         <el-date-picker
           v-model="people.birthday"
           type="date"
           placeholder="Chọn ngày sinh"
           style="width: 100%"
+          :filters="[{text: '2016-05-01', value: '2016-05-01'}, {text: '2016-05-02', value: '2016-05-02'}, {text: '2016-05-03', value: '2016-05-03'}, {text: '2016-05-04', value: '2016-05-04'}]"
         />
       </el-col>
     </el-form-item>
     <el-row>
       <el-col :span="12">
-        <el-form-item label="Chiều cao (cm)">
+        <el-form-item label="Chiều cao (cm)" prop="height">
           <el-input v-model="people.height" type="number" />
         </el-form-item>
       </el-col>
       <el-col :span="12">
-        <el-form-item label="Cân nặng (kg)">
+        <el-form-item label="Cân nặng (kg)" prop="weight">
           <el-input v-model="people.weight" type="number" />
         </el-form-item>
       </el-col>
     </el-row>
-    <el-form-item label="Quê quán">
+    <el-form-item label="Quê quán" prop="hometown">
       <el-input v-model="people.hometown" />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" @click="onSubmit">
+      <el-button type="primary" :loading="submitting" @click="onSubmit">
         {{ people.id ? "Cập nhật" : "Tạo mới" }}
       </el-button>
       <el-button @click="$emit('closeDialog')">Hủy</el-button>
@@ -82,15 +83,25 @@ export default {
         weight: [],
         hometown: [{ required: true, trigger: 'blur' }],
         socials: []
-      }
+      },
+      submitting: false
     }
   },
   methods: {
     onSubmit() {
       this.$refs.people.validate((valid) => {
         if (valid) {
+          this.submitting = true
           this.$store.dispatch('people/saveOrUpdate', this.$props.people)
-            .then(res => console.log(res))
+            .then(message => {
+              this.$emit('closeDialog')
+              this.$notify({
+                title: 'Success',
+                message,
+                type: 'success'
+              })
+              this.submitting = false
+            })
         } else {
           return false
         }

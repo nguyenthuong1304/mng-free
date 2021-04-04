@@ -39,11 +39,8 @@ export default {
       this.people = { ...people }
     },
     handleClose(done) {
-      this.$confirm('Are you sure to close this dialog?')
-        .then(_ => {
-          done()
-        })
-        .catch(_ => {})
+      this.isEdit = false
+      this.people = {}
     }
   }
 }

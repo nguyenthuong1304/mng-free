@@ -5,12 +5,7 @@
       element-loading-text="Loading..."
       element-loading-spinner="el-icon-loading"
       element-loading-background="rgba(0, 0, 0, 0.8)"
-      :data="
-        peoples.data.filter(
-          (data) =>
-            !search || data.name.toLowerCase().includes(search.toLowerCase())
-        )
-      "
+      :data="peoples.data.filter(data => !search || data.name.toLowerCase().includes(search.toLowerCase()))"
       style="width: 100%"
     >
       <el-table-column label="Tên" prop="name" />
@@ -20,8 +15,15 @@
       <el-table-column label="Chiều cao (cm)" prop="height" />
       <el-table-column label="Cân nặng (kg)" prop="weight" />
       <el-table-column align="right">
-        <template slot="header">
-          <el-input v-model="search" size="mini" placeholder="Type to search" />
+        <template slot="header" slot-scope="scope">
+          <el-input
+            :key="scope"
+            v-model="search"
+            size="mini"
+            placeholder="Type to search"
+            name="search"
+            type="text"
+          />
         </template>
         <template slot-scope="scope">
           <el-button
@@ -91,8 +93,9 @@ export default {
     getPeople(query = null) {
       this.loading = true
       this.$store.dispatch(`${this.$props.resource}/list`, query)
-        .then(res => {
+        .then(() => {
           this.loading = false
+          return
         })
     },
     handleEdit(index, row) {
@@ -106,10 +109,10 @@ export default {
       })
         .then(() => {
           this.$store.dispatch(`${this.$props.resource}/delete`, id)
-            .then(_ => {
+            .then(message => {
               this.$message({
                 type: 'success',
-                message: 'Delete completed'
+                message
               })
             })
         })
