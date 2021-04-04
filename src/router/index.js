@@ -103,7 +103,7 @@ export const asyncRoutes = [
         component: () => import('@/views/people/index'),
         name: 'PagePeople',
         meta: {
-          title: 'Page People',
+          title: 'People List',
           roles: ['admin'], // or you can only set roles in sub nav
           icon: 'list'
         }

@@ -2,6 +2,7 @@
  * Created by PanJiaChen on 16/11/18.
  */
 
+import { Message, Notification } from 'element-ui'
 /**
  * @param {string} path
  * @returns {Boolean}
@@ -84,4 +85,27 @@ export function isArray(arg) {
     return Object.prototype.toString.call(arg) === '[object Array]'
   }
   return Array.isArray(arg)
+}
+
+export function getErrorInValidServer({ status, data }) {
+  if (status === 422) {
+    if (data.errors) {
+      let message = ''
+      for (const [, value] of Object.entries(data.errors)) {
+        message += `${value} <br />`
+      }
+      Notification({
+        title: data.message,
+        dangerouslyUseHTMLString: true,
+        message,
+        type: 'error'
+      })
+    } else {
+      Message({
+        message: data.message,
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
+  }
 }
